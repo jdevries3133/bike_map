@@ -2,7 +2,7 @@
 
 members = [
     "backend",
-    "lib",
+    "libappshared",
     "web_front",
     "mobile/native"
 ]
