@@ -3,18 +3,22 @@ SHELL=/bin/bash
 # view devices available to you with `flutter devices`
 DEVICE=macos
 
-# the `ping-flutter` rule can't startup until flutter itself is up and running,
-# because it consumes flutter's PID at /tmp/flutter.pid. Therefore, this should
-# be roughly set to be greater than flutter's startup time on your system
-FLUTTER_STARTUP_DELAY=20
-
 
 .PHONY: develop
 develop:
 	concurrently \
 		--names flutter,livereload \
 		"flutter run -d $(DEVICE) --pid-file=/tmp/flutter.pid" \
-		"sh -c \"sleep $(FLUTTER_STARTUP_DELAY) && make ping-flutter\""
+		"make ping-flutter"
+
+
+.PHONY: reload
+reload:
+	# trigger flutter_rust_bridge codegen
+	just gen
+	# send USR1 signal to flutter to trigger reload
+	kill -USR1 $(shell cat /tmp/flutter.pid)
+
 
 
 # flutter doesn't live reload on file change. The default CLI waits for a `r`
@@ -30,7 +34,7 @@ ping-flutter:
 	while true; \
 	do \
 		if [ -f /tmp/flutter.pid ]; then \
-			find . | grep "\.\(rs\|dart\)$$" | entr -d -p kill -USR1 $(shell cat /tmp/flutter.pid); \
+			find . | grep "\.\(rs\|dart\)$$" | entr -d -p make reload; \
 		fi; \
 		sleep 1; \
 	done
