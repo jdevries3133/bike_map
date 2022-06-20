@@ -12,6 +12,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'dart:ffi' as ffi;
 
 abstract class Native {
+  Future<String> getBackendBaseUrl({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGetBackendBaseUrlConstMeta;
+
   Future<Platform> platform({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kPlatformConstMeta;
@@ -21,6 +25,8 @@ abstract class Native {
   FlutterRustBridgeTaskConstMeta get kRustReleaseModeConstMeta;
 }
 
+/// everything below this comes from the flutter_rust_bridge template, so it
+/// has some well-commented generic examples
 enum Platform {
   Unknown,
   Android,
@@ -37,6 +43,21 @@ class NativeImpl extends FlutterRustBridgeBase<NativeWire> implements Native {
       NativeImpl.raw(NativeWire(dylib));
 
   NativeImpl.raw(NativeWire inner) : super(inner);
+
+  Future<String> getBackendBaseUrl({dynamic hint}) =>
+      executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) => inner.wire__get_backend_base_url(port_),
+        parseSuccessData: _wire2api_String,
+        constMeta: kGetBackendBaseUrlConstMeta,
+        argValues: [],
+        hint: hint,
+      ));
+
+  FlutterRustBridgeTaskConstMeta get kGetBackendBaseUrlConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "_get_backend_base_url",
+        argNames: [],
+      );
 
   Future<Platform> platform({dynamic hint}) =>
       executeNormal(FlutterRustBridgeTask(
@@ -75,12 +96,24 @@ class NativeImpl extends FlutterRustBridgeBase<NativeWire> implements Native {
 }
 
 // Section: wire2api
+String _wire2api_String(dynamic raw) {
+  return raw as String;
+}
+
 bool _wire2api_bool(dynamic raw) {
   return raw as bool;
 }
 
 Platform _wire2api_platform(dynamic raw) {
   return Platform.values[raw];
+}
+
+int _wire2api_u8(dynamic raw) {
+  return raw as int;
+}
+
+Uint8List _wire2api_uint_8_list(dynamic raw) {
+  return raw as Uint8List;
 }
 
 // ignore_for_file: camel_case_types, non_constant_identifier_names, avoid_positional_boolean_parameters, annotate_overrides, constant_identifier_names
@@ -104,6 +137,20 @@ class NativeWire implements FlutterRustBridgeWireBase {
       ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
           lookup)
       : _lookup = lookup;
+
+  void wire__get_backend_base_url(
+    int port_,
+  ) {
+    return _wire__get_backend_base_url(
+      port_,
+    );
+  }
+
+  late final _wire__get_backend_base_urlPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire__get_backend_base_url');
+  late final _wire__get_backend_base_url =
+      _wire__get_backend_base_urlPtr.asFunction<void Function(int)>();
 
   void wire_platform(
     int port_,
@@ -163,5 +210,5 @@ class NativeWire implements FlutterRustBridgeWireBase {
 }
 
 typedef DartPostCObjectFnType = ffi.Pointer<
-    ffi.NativeFunction<ffi.Bool Function(DartPort, ffi.Pointer<ffi.Void>)>>;
+    ffi.NativeFunction<ffi.Uint8 Function(DartPort, ffi.Pointer<ffi.Void>)>>;
 typedef DartPort = ffi.Int64;

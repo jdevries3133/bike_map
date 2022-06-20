@@ -1,3 +1,16 @@
+// methods from the shared library must be declared and shadowed here to be
+// shared on the flutter side
+use flutter_rust_bridge::frb;
+pub use libappshared::constants::get_backend_base_url;
+
+#[frb(mirror(get_backend_base_url))]
+pub fn _get_backend_base_url() -> String {
+    get_backend_base_url()
+}
+
+/// everything below this comes from the flutter_rust_bridge template, so it
+/// has some well-commented generic examples
+
 // This is the entry point of your Rust library.
 // When adding new code to your project, note that only items used
 // here will be transformed to their Dart equivalents.
