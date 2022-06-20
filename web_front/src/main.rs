@@ -1,4 +1,4 @@
-use libappshared::constants;
+use lib::constants;
 use reqwasm::http::Request;
 use wasm_bindgen_futures;
 use wasm_logger;

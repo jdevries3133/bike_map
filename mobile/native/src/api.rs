@@ -1,7 +1,7 @@
 // methods from the shared library must be declared and shadowed here to be
 // shared on the flutter side
 use flutter_rust_bridge::frb;
-pub use libappshared::constants::get_backend_base_url;
+pub use lib::constants::get_backend_base_url;
 
 #[frb(mirror(get_backend_base_url))]
 pub fn _get_backend_base_url() -> String {
